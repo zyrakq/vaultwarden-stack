@@ -1,0 +1,26 @@
+services:
+  vaultwarden:
+    container_name: vaultwarden
+    image: vaultwarden/server:latest
+    restart: unless-stopped
+    volumes:
+      - vaultwarden-data:/data
+      - letsencrypt-certs:/certs
+    environment:
+      VIRTUAL_PORT: ${VIRTUAL_PORT:-80}
+      VIRTUAL_HOST: ${VIRTUAL_HOST}
+      LETSENCRYPT_HOST: ${LETSENCRYPT_HOST}
+      LETSENCRYPT_EMAIL: ${LETSENCRYPT_EMAIL}
+      VIRTUAL_PROTO: ${VIRTUAL_PROTO:-https}
+      ROCKET_TLS: '{certs="/certs/${VIRTUAL_HOST}/fullchain.pem",key="/certs/${VIRTUAL_HOST}/key.pem"}'
+    networks:
+      - letsencrypt-network
+volumes:
+  vaultwarden-data:
+    name: vaultwarden-data
+  letsencrypt-certs:
+    external: true
+networks:
+  letsencrypt-network:
+    name: letsencrypt-network
+    external: true

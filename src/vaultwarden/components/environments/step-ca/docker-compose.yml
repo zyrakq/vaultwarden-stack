@@ -1,0 +1,22 @@
+services:
+  vaultwarden:
+    volumes:
+      - step-ca-certs:/certs
+    environment:
+      VIRTUAL_PORT: ${VIRTUAL_PORT:-80}
+      VIRTUAL_HOST: ${VIRTUAL_HOST}
+      LETSENCRYPT_HOST: ${LETSENCRYPT_HOST}
+      LETSENCRYPT_EMAIL: ${LETSENCRYPT_EMAIL}
+      VIRTUAL_PROTO: ${VIRTUAL_PROTO:-https}
+      ROCKET_TLS: '{certs="/certs/${VIRTUAL_HOST}/fullchain.pem",key="/certs/${VIRTUAL_HOST}/key.pem"}'
+    networks:
+      - step-ca-network
+
+volumes:
+  step-ca-certs:
+    external: true
+
+networks:
+  step-ca-network:
+    name: step-ca-network
+    external: true

@@ -1,0 +1,11 @@
+services:
+  vaultwarden:
+    container_name: vaultwarden
+    image: vaultwarden/server:latest
+    restart: unless-stopped
+    volumes:
+      - vaultwarden-data:/data
+
+volumes:
+  vaultwarden-data:
+    name: vaultwarden-data

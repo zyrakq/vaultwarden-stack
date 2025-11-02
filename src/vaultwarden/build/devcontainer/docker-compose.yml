@@ -1,0 +1,15 @@
+services:
+  vaultwarden:
+    container_name: vaultwarden
+    image: vaultwarden/server:latest
+    restart: unless-stopped
+    volumes:
+      - vaultwarden-data:/data
+    networks:
+      - vaultwarden-workspace-network
+volumes:
+  vaultwarden-data:
+    name: vaultwarden-data
+networks:
+  vaultwarden-workspace-network:
+    external: true
