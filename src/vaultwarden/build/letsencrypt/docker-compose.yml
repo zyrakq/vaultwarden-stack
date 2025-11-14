@@ -8,16 +8,20 @@ services:
       options:
         max-size: 10m
         max-file: 3
-    volumes:
-      - vaultwarden-data:/data
-      - letsencrypt-certs:/certs
     environment:
+      ADMIN_TOKEN: ${ADMIN_TOKEN}
+      SIGNUPS_ALLOWED: ${SIGNUPS_ALLOWED:-true}
+      INVITATIONS_ALLOWED: ${INVITATIONS_ALLOWED:-true}
+      DOMAIN: ${DOMAIN}
       VIRTUAL_PORT: ${VIRTUAL_PORT:-80}
       VIRTUAL_HOST: ${VIRTUAL_HOST}
       LETSENCRYPT_HOST: ${LETSENCRYPT_HOST}
       LETSENCRYPT_EMAIL: ${LETSENCRYPT_EMAIL}
       VIRTUAL_PROTO: ${VIRTUAL_PROTO:-https}
       ROCKET_TLS: '{certs="/certs/${VIRTUAL_HOST}/fullchain.pem",key="/certs/${VIRTUAL_HOST}/key.pem"}'
+    volumes:
+      - vaultwarden-data:/data
+      - letsencrypt-certs:/certs
     networks:
       - letsencrypt-network
 volumes:

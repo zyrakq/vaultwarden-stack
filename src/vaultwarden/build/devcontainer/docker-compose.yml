@@ -8,6 +8,10 @@ services:
       options:
         max-size: 10m
         max-file: 3
+    environment:
+      ADMIN_TOKEN: ${ADMIN_TOKEN}
+      SIGNUPS_ALLOWED: ${SIGNUPS_ALLOWED:-true}
+      INVITATIONS_ALLOWED: ${INVITATIONS_ALLOWED:-true}
     volumes:
       - vaultwarden-data:/data
     networks:
