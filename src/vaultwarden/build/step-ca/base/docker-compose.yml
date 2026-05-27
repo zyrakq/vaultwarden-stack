@@ -1,13 +1,15 @@
+x-logging: &default-logging
+  driver: "json-file"
+  options:
+    max-size: "${LOG_MAX_SIZE:-10m}"
+    max-file: "${LOG_MAX_FILE:-3}"
+    compress: "${LOG_COMPRESS:-true}"
 services:
   vaultwarden:
     container_name: vaultwarden
     image: vaultwarden/server:latest
     restart: unless-stopped
-    logging:
-      driver: "json-file"
-      options:
-        max-size: 10m
-        max-file: 3
+    logging: *default-logging
     environment:
       ADMIN_TOKEN: ${ADMIN_TOKEN}
       SIGNUPS_ALLOWED: ${SIGNUPS_ALLOWED:-true}
@@ -21,15 +23,15 @@ services:
       ROCKET_TLS: '{certs="/certs/${VIRTUAL_HOST}/fullchain.pem",key="/certs/${VIRTUAL_HOST}/key.pem"}'
     volumes:
       - vaultwarden-data:/data
-      - letsencrypt-certs:/certs
+      - step-ca-certs:/certs
     networks:
-      - letsencrypt-network
+      - step-ca-network
 volumes:
   vaultwarden-data:
     name: vaultwarden-data
-  letsencrypt-certs:
+  step-ca-certs:
     external: true
 networks:
-  letsencrypt-network:
-    name: letsencrypt-network
+  step-ca-network:
+    name: step-ca-network
     external: true

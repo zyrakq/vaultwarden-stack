@@ -1,6 +1,24 @@
 [paths]
 environments_path = "./environments"
-extensions_dirs = []
+extensions_dirs = ["extensions"]
+
+[build]
+extensions = ["oidc", "step-ca-trust"]
+
+[build.combos]
+oidc-trust = ["oidc", "step-ca-trust"]
 
 [build.environments]
-available = ["devcontainer", "forwarding", "letsencrypt", "step-ca"]
+available = ["forwarding", "letsencrypt", "step-ca"]
+
+[build.environments.forwarding]
+extensions = ["oidc"]
+combos = []
+
+[build.environments.letsencrypt]
+extensions = ["oidc"]
+combos = []
+
+[build.environments.step-ca]
+extensions = []
+combos = ["oidc-trust"]

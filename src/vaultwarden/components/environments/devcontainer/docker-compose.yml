@@ -1,8 +1,0 @@
-services:
-  vaultwarden:
-    networks:
-      - vaultwarden-workspace-network
-
-networks:
-  vaultwarden-workspace-network:
-    external: true

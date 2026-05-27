@@ -1,13 +1,16 @@
+x-logging: &default-logging
+  driver: "json-file"
+  options:
+    max-size: "${LOG_MAX_SIZE:-10m}"
+    max-file: "${LOG_MAX_FILE:-3}"
+    compress: "${LOG_COMPRESS:-true}"
+
 services:
   vaultwarden:
     container_name: vaultwarden
     image: vaultwarden/server:latest
     restart: unless-stopped
-    logging:
-      driver: "json-file"
-      options:
-        max-size: 10m
-        max-file: 3
+    logging: *default-logging
     environment:
       ADMIN_TOKEN: ${ADMIN_TOKEN}
       SIGNUPS_ALLOWED: ${SIGNUPS_ALLOWED:-true}
