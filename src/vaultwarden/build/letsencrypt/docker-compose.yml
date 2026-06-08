@@ -1,19 +1,26 @@
 x-logging: &default-logging
-  driver: "json-file"
+  driver: json-file
   options:
-    max-size: "${LOG_MAX_SIZE:-10m}"
-    max-file: "${LOG_MAX_FILE:-3}"
-    compress: "${LOG_COMPRESS:-true}"
+    max-size: ${LOG_MAX_SIZE:-10m}
+    max-file: ${LOG_MAX_FILE:-3}
+    compress: ${LOG_COMPRESS:-true}
 services:
   vaultwarden:
     container_name: vaultwarden
-    image: vaultwarden/server:latest
+    image: ${IMAGE:-vaultwarden/server:latest}
     restart: unless-stopped
     logging: *default-logging
     environment:
       ADMIN_TOKEN: ${ADMIN_TOKEN}
       SIGNUPS_ALLOWED: ${SIGNUPS_ALLOWED:-true}
       INVITATIONS_ALLOWED: ${INVITATIONS_ALLOWED:-true}
+      DOMAIN: ${DOMAIN}
+      VIRTUAL_PORT: ${VIRTUAL_PORT:-80}
+      VIRTUAL_HOST: ${VIRTUAL_HOST}
+      LETSENCRYPT_HOST: ${LETSENCRYPT_HOST}
+      LETSENCRYPT_EMAIL: ${LETSENCRYPT_EMAIL}
+      VIRTUAL_PROTO: ${VIRTUAL_PROTO:-https}
+      ROCKET_TLS: '{certs="/certs/${VIRTUAL_HOST}/fullchain.pem",key="/certs/${VIRTUAL_HOST}/key.pem"}'
       SSO_ENABLED: ${SSO_ENABLED:-true}
       SSO_ONLY: ${SSO_ONLY:-true}
       SSO_SIGNUPS_MATCH_EMAIL: ${SSO_SIGNUPS_MATCH_EMAIL:-true}
@@ -30,13 +37,24 @@ services:
       # SSO_AUTHORIZE_EXTRA_PARAMS: ${SSO_AUTHORIZE_EXTRA_PARAMS}
       # SSO_AUDIENCE_TRUSTED: ${SSO_AUDIENCE_TRUSTED}
       # SSO_MASTER_PASSWORD_POLICY: ${SSO_MASTER_PASSWORD_POLICY}
+
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_FROM: ${SMTP_FROM}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_SECURITY: ${SMTP_SECURITY:-starttls}
+      SMTP_USERNAME: ${SMTP_USERNAME}
+      SMTP_PASSWORD: ${SMTP_PASSWORD}
     volumes:
       - vaultwarden-data:/data
+      - letsencrypt-certs:/certs
     networks:
-      - vaultwarden-workspace-network
+      - letsencrypt-network
 volumes:
   vaultwarden-data:
     name: vaultwarden-data
+  letsencrypt-certs:
+    external: true
 networks:
-  vaultwarden-workspace-network:
+  letsencrypt-network:
+    name: letsencrypt-network
     external: true

@@ -1,13 +1,13 @@
 x-logging: &default-logging
-  driver: "json-file"
+  driver: json-file
   options:
-    max-size: "${LOG_MAX_SIZE:-10m}"
-    max-file: "${LOG_MAX_FILE:-3}"
-    compress: "${LOG_COMPRESS:-true}"
+    max-size: ${LOG_MAX_SIZE:-10m}
+    max-file: ${LOG_MAX_FILE:-3}
+    compress: ${LOG_COMPRESS:-true}
 services:
   vaultwarden:
     container_name: vaultwarden
-    image: vaultwarden/server:latest
+    image: ${IMAGE:-vaultwarden/server:latest}
     restart: unless-stopped
     logging: *default-logging
     environment:
@@ -37,17 +37,26 @@ services:
       # SSO_AUTHORIZE_EXTRA_PARAMS: ${SSO_AUTHORIZE_EXTRA_PARAMS}
       # SSO_AUDIENCE_TRUSTED: ${SSO_AUDIENCE_TRUSTED}
       # SSO_MASTER_PASSWORD_POLICY: ${SSO_MASTER_PASSWORD_POLICY}
+
+      SMTP_HOST: ${SMTP_HOST}
+      SMTP_FROM: ${SMTP_FROM}
+      SMTP_PORT: ${SMTP_PORT:-587}
+      SMTP_SECURITY: ${SMTP_SECURITY:-starttls}
+      SMTP_USERNAME: ${SMTP_USERNAME}
+      SMTP_PASSWORD: ${SMTP_PASSWORD}
+      STEP_CA_TRUST: ${STEP_CA_TRUST:-true}
+      STEP_CA_TRUST_RESTART: ${STEP_CA_TRUST_RESTART:-true}
     volumes:
       - vaultwarden-data:/data
-      - letsencrypt-certs:/certs
+      - step-ca-certs:/certs
     networks:
-      - letsencrypt-network
+      - step-ca-network
 volumes:
   vaultwarden-data:
     name: vaultwarden-data
-  letsencrypt-certs:
+  step-ca-certs:
     external: true
 networks:
-  letsencrypt-network:
-    name: letsencrypt-network
+  step-ca-network:
+    name: step-ca-network
     external: true
